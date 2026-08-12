@@ -47,7 +47,6 @@ const VerifyPage = () => {
                 name='code'
                 type='text'
                 autoComplete='off'
-                autoFocus
                 defaultValue={state?.field ?? ''}
                 placeholder='Enter your code'
                 className='w-full rounded-lg border border-blue-200 px-4 py-3 outline-none transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-100'

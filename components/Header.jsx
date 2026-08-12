@@ -228,7 +228,7 @@ const Header = () => {
       {/* Mobile Interactive Menu Drawer */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out border-b border-slate-100 bg-white ${
-          isOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'
+          isOpen ? 'max-h-full opacity-100' : 'max-h-0 opacity-0'
         }`}
         id='mobile-menu'
       >
@@ -301,6 +301,26 @@ const Header = () => {
                     className='block rounded-lg px-4 py-2 hover:bg-slate-50'
                   >
                     Bookings
+                  </Link>
+                  <Link
+                    href='/admin/apartments/add'
+                    onClick={() => {
+                      setAdminOpen(false);
+                      setIsOpen(false);
+                    }}
+                    className='block rounded-lg px-4 py-2 hover:bg-slate-50'
+                  >
+                    Add Apartment
+                  </Link>
+                  <Link
+                    href='/admin/bookings/add'
+                    onClick={() => {
+                      setAdminOpen(false);
+                      setIsOpen(false);
+                    }}
+                    className='block rounded-lg px-4 py-2 hover:bg-slate-50'
+                  >
+                    Add Booking
                   </Link>
                 </div>
               )}

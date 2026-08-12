@@ -17,7 +17,7 @@ const CancelBookingButton = ({ bookingId }) => {
 
             if (result.success) {
               toast.success('Booking cancelled successfully!');
-              router.push('/admin');
+              router.push('/admin/bookings');
             } else {
               toast.error(result.error || 'Failed to cancel booking');
             }
