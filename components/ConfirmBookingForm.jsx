@@ -15,7 +15,7 @@ const ConfirmBookingForm = ({ apartment, booking }) => {
       toast.success('Apartment has been booked!');
       router.push('/bookings');
     }
-  }, [state]);
+  }, [state, router]);
 
   const totalPrice = booking.totalNights * apartment.price;
   return (

@@ -8,11 +8,13 @@ import { toast } from 'sonner';
 import createAdminBooking from '@/lib/actions/createAdminBooking';
 
 const AdminBookingForm = ({ apartments }) => {
+  const [tempStart, setTempStart] = useState('');
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [selectedId, setSelectedId] = useState('');
   const [totalPrice, setTotalPrice] = useState('');
   const [isChecked, setIsChecked] = useState(true);
+  const [sendConfirmation, setSendConfirmation] = useState(false);
   const [formVersion, setFormVersion] = useState(0);
 
   const [state, formAction] = useActionState(createAdminBooking, {
@@ -32,8 +34,6 @@ const AdminBookingForm = ({ apartments }) => {
         )
       : 0;
 
-  const today = new Date().toISOString().split('T')[0];
-
   useEffect(() => {
     if (selectedApartment && nights > 0) {
       setTotalPrice(String(selectedApartment.price * nights));
@@ -50,7 +50,17 @@ const AdminBookingForm = ({ apartments }) => {
       toast.success('Apartment has been booked!');
       router.push('/admin/bookings');
     }
-  }, [state]);
+  }, [state, router]);
+
+  const handleBlur = () => {
+    setCheckIn(tempStart);
+
+    if (checkOut && tempStart > checkOut) {
+      setCheckOut('');
+    }
+  };
+
+  const today = new Date().toISOString().split('T')[0];
 
   return (
     <form action={formAction} className='p-6 mt-4 space-y-6'>
@@ -100,8 +110,9 @@ const AdminBookingForm = ({ apartments }) => {
             type='date'
             id='check_in'
             name='check_in'
-            value={checkIn}
-            onChange={(e) => setCheckIn(e.target.value)}
+            value={tempStart}
+            onChange={(e) => setTempStart(e.target.value)}
+            onBlur={handleBlur}
             min={today}
             className='w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition duration-200 text-sm'
           />
@@ -118,8 +129,9 @@ const AdminBookingForm = ({ apartments }) => {
             id='check_out'
             name='check_out'
             value={checkOut}
+            min={checkIn}
+            // disabled={!checkIn}
             onChange={(e) => setCheckOut(e.target.value)}
-            min={today}
             className='w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition duration-200 text-sm'
           />
         </div>
@@ -182,7 +194,23 @@ const AdminBookingForm = ({ apartments }) => {
           className='w-4 h-4'
         />
       </div>
+      <div className='grid grid-cols-2 place-items-center'>
+        <label
+          htmlFor='send_confirmation'
+          className='block text-xs font-bold text-slate-700 uppercase tracking-wide mt-1'
+        >
+          Send booking confirmation
+        </label>
 
+        <input
+          id='send_confirmation'
+          name='send_confirmation'
+          type='checkbox'
+          checked={sendConfirmation}
+          onChange={(e) => setSendConfirmation(e.target.checked)}
+          className='w-4 h-4'
+        />
+      </div>
       <div className=''>
         <p className='block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1'>
           Guests <span className='text-rose-500'>*</span>

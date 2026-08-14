@@ -1,18 +1,24 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { useActionState } from 'react';
+import { useEffect, useState, useActionState } from 'react';
 import { toast } from 'sonner';
 import checkBookingDates from '@/lib/actions/checkBookingDates';
 
 const BookingForm = ({ apartment }) => {
   const [state, formAction] = useActionState(checkBookingDates, {});
+  const [tempStart, setTempStart] = useState('');
+  const [checkIn, setCheckIn] = useState('');
+  const [checkOut, setCheckOut] = useState('');
   const router = useRouter();
   useEffect(() => {
     if (state?.error) {
       toast.error(state.error);
       if (state.requiresLogin) {
-        router.push('/login');
+        router.push(
+          `/login?callbackUrl=${encodeURIComponent(
+            `/apartments/${apartment.id}`,
+          )}`,
+        );
       }
     }
 
@@ -20,7 +26,24 @@ const BookingForm = ({ apartment }) => {
       toast.success('Great news! Your chosen date is available to book');
       router.push('/bookings/confirm');
     }
-  }, [state]);
+  }, [state, router]);
+
+  // const handleCheckInChange = (e) => {
+  //   const newCheckInDate = e.target.value;
+  //   setCheckIn(newCheckInDate);
+
+  //   if (!checkOut || checkOut < newCheckInDate) {
+  //     setCheckOut(newCheckInDate);
+  //   }
+  // };
+
+  const handleBlur = () => {
+    setCheckIn(tempStart);
+
+    if (checkOut && tempStart > checkOut) {
+      setCheckOut('');
+    }
+  };
 
   const today = new Date().toISOString().split('T')[0];
   return (
@@ -44,6 +67,9 @@ const BookingForm = ({ apartment }) => {
               type='date'
               id='check_in'
               name='check_in'
+              value={tempStart}
+              onChange={(e) => setTempStart(e.target.value)}
+              onBlur={handleBlur}
               min={today}
               className='w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition duration-200 text-sm'
             />
@@ -59,7 +85,10 @@ const BookingForm = ({ apartment }) => {
               type='date'
               id='check_out'
               name='check_out'
-              min={today}
+              value={checkOut}
+              min={checkIn}
+              // disabled={!checkIn}
+              onChange={(e) => setCheckOut(e.target.value)}
               className='w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition duration-200 text-sm'
             />
           </div>
